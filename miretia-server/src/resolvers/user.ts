@@ -31,17 +31,22 @@ class UserResponse {
   user?: User;
 }
 
-// @ObjectType()
-// class BooleanResponse {
-// 	@Field(() => [FieldError], { nullable: true })
-// 	errors?: FieldError[];
+@ObjectType()
+class BooleanResponse {
+  @Field(() => [FieldError], { nullable: true })
+  errors?: FieldError[];
 
-// 	@Field(() => Boolean, { nullable: true })
-// 	boolean?: boolean;
-// }
+  @Field(() => Boolean, { nullable: true })
+  boolean?: boolean;
+}
 
 @Resolver(UserResponse)
 export class UserResolver {
+  @Query(() => [User])
+  async allUsers(@Ctx() ctx: Context) {
+    return ctx.prisma.user.findMany();
+  }
+
   @Query(() => UserResponse)
   async user(
     @Arg("id") id: number,
@@ -157,8 +162,27 @@ export class UserResolver {
     };
   }
 
-  @Query(() => [User])
-  async allUsers(@Ctx() ctx: Context) {
-    return ctx.prisma.user.findMany();
+  @Mutation(() => BooleanResponse)
+  async deleteUser(
+    @Arg("id") id: number,
+    @Ctx() ctx: Context
+  ): Promise<BooleanResponse> {
+    var user = await ctx.prisma.user.delete({
+      where: {
+        id,
+      },
+    });
+    if (user)
+      return {
+        boolean: true,
+      };
+    return {
+      errors: [
+        {
+          field: "id",
+          message: "No user with corresponding ID.",
+        },
+      ],
+    };
   }
 }
