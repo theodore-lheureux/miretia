@@ -54,18 +54,69 @@ export class UserResolver {
     });
 
     if (user)
-		return {
-			user
-		}
-	else
-		return {
-			errors: [
-				{
-					field: "id",
-					message: "No user with corresponding ID."
-				}
-			]
-		}
+      return {
+        user,
+      };
+    else
+      return {
+        errors: [
+          {
+            field: "id",
+            message: "No user with corresponding ID.",
+          },
+        ],
+      };
+  }
+
+  @Query(() => UserResponse)
+  async userByEmail(
+    @Arg("email") email: string,
+    @Ctx() ctx: Context
+  ): Promise<UserResponse> {
+    var user = await ctx.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (user)
+      return {
+        user,
+      };
+    return {
+      errors: [
+        {
+          field: "email",
+          message: "No user with corresponding email.",
+        },
+      ],
+    };
+  }
+
+  @Query(() => UserResponse)
+  async userByName(
+    @Arg("username") username: string,
+    @Ctx() ctx: Context
+  ): Promise<UserResponse> {
+    var user = await ctx.prisma.user.findUnique({
+      where: {
+        username,
+      },
+    });
+
+    if (user) {
+      return {
+        user,
+      };
+    }
+
+    return {
+      errors: [
+        {
+          field: "username",
+          message: "No user with corresponding username.",
+        },
+      ],
+    };
   }
 
   @Mutation(() => UserResponse)
