@@ -184,16 +184,19 @@ export class UserResolver {
 				],
 			};
 
-		if (user?.password === (await argon2.hash(password))) return { user };
+		const valid = await argon2.verify(user.password, password);
 
-		return {
-			errors: [
-				{
-					field: "password",
-					message: "Invalid password.",
-				},
-			],
-		};
+		if (!valid)
+			return {
+				errors: [
+					{
+						field: "password",
+						message: "Invalid password.",
+					},
+				],
+			};
+
+		return { user };
 	}
 
 	@Mutation(() => BooleanResponse)
