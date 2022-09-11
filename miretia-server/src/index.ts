@@ -16,9 +16,9 @@ const main = async () => {
 		scalarsMap: [{ type: GraphQLScalarType, scalar: DateTimeResolver }],
 	});
 
-	new ApolloServer({ schema, context: context }).listen({ port: 4000 }, () =>
+	new ApolloServer({ schema, context: context }).listen({ port: 6900 }, () =>
 		console.log(`
-            🚀 Server ready at: http://localhost:4000
+            🚀 Server ready at: http://localhost:6900
             ⭐️  See sample queries: http://pris.ly/e/ts/graphql-typegraphql#using-the-graphql-api`)
 	);
 };
